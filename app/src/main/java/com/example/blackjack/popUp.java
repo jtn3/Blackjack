@@ -20,7 +20,6 @@ public class popUp {
 
     public void showPopupWindow(final View view) {
 
-
         //Create a View object yourself through inflater
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup, null);
@@ -47,10 +46,10 @@ public class popUp {
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                CardActivity.getInstance().recreate();
                 //As an example, display the message
                // Toast.makeText(view.getContext(), "Wow, popup action button", Toast.LENGTH_SHORT).show();
-                this.recreate();
+                popupWindow.dismiss();
             }
         });
 
@@ -63,7 +62,7 @@ public class popUp {
             public boolean onTouch(View v, MotionEvent event) {
 
                 //Close the window when clicked
-                popupWindow.dismiss();
+                //popupWindow.dismiss();
                 return true;
             }
         });

@@ -30,6 +30,7 @@ import java.util.concurrent.TimeoutException;
 
 
 public class CardActivity extends AppCompatActivity{
+    private static CardActivity instance;
     Player User = new Player();
     Player House = new Player();
     RequestQueue requestQueue;
@@ -99,30 +100,21 @@ public class CardActivity extends AppCompatActivity{
                 String holder = "You Won!"; String Holder1 = "You Lost.";
                 setCards(House);
                 stayChecker();
-                /*while(House.value2 < 17 && House.value1 < 17) {
-                    drawCard(draw1card, House, new VolleyResponseListener() {
-                        @Override
-                        public void onError(String error) { System.out.println(error);
-                        }
-                        @Override
-                        public void onResponse(String response) {
-                            setCards(House);
-                            if (House.Busted()) {
-                                tempText.setText(holder);
-                                User.reset(); House.reset();
-                            }
-                        }
-                    });
-                }*/
                 setCards(House);
                 if (House.Busted()) {
-                    tempText.setText(holder);
-                    User.reset(); House.reset();
+                    holder += " House busted!";
+                    popupMaker(holder,v);
+                    //tempText.setText(holder);
+                   // User.reset(); House.reset();
                 }
                 if (User.isWinner(House)) {
-                    tempText.setText(holder);
+                    //tempText.setText(holder);
+                    holder += "";
+                    popupMaker(holder,v);
                 } else {
-                    tempText.setText(holder);
+                    //tempText.setText(holder);
+                    holder += "You Lost!";
+                    popupMaker(holder,v);
                 }
                 CardActivity.this.recreate();
                 User.reset(); House.reset();
@@ -281,6 +273,16 @@ public class CardActivity extends AppCompatActivity{
             });
         }
         return;
+        }
+        // allows outside classes to use my activity method. Recreate() in popup.java
+        public static CardActivity getInstance() {
+            return instance;
+        }
+        //Allows the creation of popup windows when called.
+        public void popupMaker(String result, View v) {
+            popUp resultView = new popUp();
+            resultView.popupText = result;
+            resultView.showPopupWindow(v);
         }
 }
 
