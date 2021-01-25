@@ -97,7 +97,7 @@ public class CardActivity extends AppCompatActivity{
             public void onClick(View v) {
                 User.setValues(User.hand);
                 TextView tempText = findViewById(R.id.textView3);
-                String holder = "You Won!"; String Holder1 = "You Lost.";
+                String holder = "";
                 setCards(House);
                 stayChecker();
                 setCards(House);
@@ -106,18 +106,21 @@ public class CardActivity extends AppCompatActivity{
                     popupMaker(holder,v);
                     //tempText.setText(holder);
                    // User.reset(); House.reset();
+                    return;
                 }
                 if (User.isWinner(House)) {
                     //tempText.setText(holder);
-                    holder += "";
+                    holder += "You Won!";
                     popupMaker(holder,v);
+                    return;
                 } else {
                     //tempText.setText(holder);
                     holder += "You Lost!";
                     popupMaker(holder,v);
+                    return;
                 }
                 //CardActivity.this.recreate();
-                resetAll();
+             //   resetAll();
             }
         });
 
@@ -222,8 +225,7 @@ public class CardActivity extends AppCompatActivity{
                 JSONObject temp = Jsonarray.getJSONObject(i);
                 sharedDeck.cardDeckValues.push(temp.getString("value"));
                 sharedDeck.cardDeckCodes.push(temp.getString("code"));
-                //player.hand.add(temp.getString("value"));
-               // player.code.add(temp.getString("code"));      //adds directly into both arrays
+
             }
         }catch (Exception e) {
             System.out.println(e);
@@ -264,7 +266,7 @@ public class CardActivity extends AppCompatActivity{
             popUp resultView = new popUp();
             resultView.popupText = result;
             resultView.showPopupWindow(v);
-            CardActivity.getInstance().recreate();
+          //  CardActivity.getInstance().recreate();
         }
     //
     //
@@ -281,7 +283,7 @@ public class CardActivity extends AppCompatActivity{
             }
             @Override
             public void onResponse(String response) {
-                deckid = Parse(response, "deck_id");
+                //deckid = Parse(response, "deck_id");
                 String draw30cards = "https://deckofcardsapi.com/api/deck/" + deckid + "/draw/?count=30";
                 //
                 // Draw 30 cards into stacks, both players draw 2 cards.

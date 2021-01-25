@@ -47,6 +47,7 @@ public class popUp {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
+                CardActivity.getInstance().resetAll();
              //   CardActivity.getInstance().recreate();
                 //As an example, display the message
                // Toast.makeText(view.getContext(), "Wow, popup action button", Toast.LENGTH_SHORT).show();
