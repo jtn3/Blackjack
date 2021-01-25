@@ -56,11 +56,11 @@ public class Player {
         return true;
     }
     //
-    //checks which numbers are higher. Does not account for over 21. Check if busted before this.
+    //checks which numbers are higher. Does not account for over 21. Check if busted before this. If tied, other wins.
     //
     public boolean isWinner(Player other) {
         int finalValue1; int finalValue2;
-        if (this.value1 >= this.value2) {
+        if (this.value1 > this.value2) {
             finalValue1 = this.value1;
         } else {
             finalValue1 = this.value2;

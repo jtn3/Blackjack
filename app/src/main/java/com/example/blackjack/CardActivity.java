@@ -33,6 +33,7 @@ public class CardActivity extends AppCompatActivity{
     private static CardActivity instance;
     Player User = new Player();
     Player House = new Player();
+    Deck sharedDeck = new Deck();
     RequestQueue requestQueue;
     String deckid = "";
     String draw1card = "";
@@ -65,32 +66,31 @@ public class CardActivity extends AppCompatActivity{
             @Override
             public void onResponse(String response) {
                 deckid = Parse(response, "deck_id");
-                String draw2cards = "https://deckofcardsapi.com/api/deck/" + deckid + "/draw/?count=2";
-                draw1card = "https://deckofcardsapi.com/api/deck/" + deckid + "/draw/?count=1";
-                drawCard(draw2cards, User, new VolleyResponseListener() {
+                String draw30cards = "https://deckofcardsapi.com/api/deck/" + deckid + "/draw/?count=30";
+                //
+                // Draw 30 cards into stacks, both players draw 2 cards.
+                //
+                drawCard(draw30cards, new VolleyResponseListener() {
                     @Override
                     public void onError(String error) { }
                     @Override
                     public void onResponse(String response) {
+                        sharedDeck.drawSharedDeck(User);   sharedDeck.drawSharedDeck(User);
+                        sharedDeck.drawSharedDeck(House);   sharedDeck.drawSharedDeck(House);
+
+                        TextView tempText = findViewById(R.id.textView3);
+                        tempText.setText("");
+
                         User.setValues(User.hand);
                         setCards(User);
-                        TextView tempText = findViewById(R.id.textView3);
-                            tempText.setText("");
+                        House.setValues(House.hand);
+                        setCards(House);
+                        House.cardSlots[1].setImageResource(R.drawable.gray_back);
                     }
                 });
-                drawCard(draw2cards, House, new VolleyResponseListener() {
-                            @Override
-                            public void onError(String error) { }
-                            @Override                       //Draw 2 cards for both Players
-                            public void onResponse(String response) {
-                                House.setValues(House.hand);
-                                setCards(House);
-                                House.cardSlots[1].setImageResource(R.drawable.gray_back);
-                            }
-                        });
+
                     }
         });
-
                 //Stay and Draw Buttons
         Button StayButton = findViewById(R.id.Stay);
         StayButton.setOnClickListener(new View.OnClickListener() {
@@ -116,24 +116,16 @@ public class CardActivity extends AppCompatActivity{
                     holder += "You Lost!";
                     popupMaker(holder,v);
                 }
-                CardActivity.this.recreate();
-                User.reset(); House.reset();
+                //CardActivity.this.recreate();
+                resetAll();
             }
         });
 
         Button DrawButton = findViewById(R.id.Draw);
         DrawButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
                 TextView tempText = findViewById(R.id.textView3);
-                drawCard(draw1card, User, new VolleyResponseListener() {
-                    @Override
-                    public void onError(String error) {
-                        String fail = "failed to draw";
-                        tempText.setText(fail);
-                    }
-                    @Override
-                    public void onResponse(String response) {
+                sharedDeck.drawSharedDeck(User);
                         if (!(User.setValues(User.hand))) {
                             String holder = "You Busted.";
                             tempText.setText(holder);
@@ -142,8 +134,6 @@ public class CardActivity extends AppCompatActivity{
                             return;
                         }
                         setCards(User);
-                    }
-                });
             }
         });
     }
@@ -182,15 +172,15 @@ public class CardActivity extends AppCompatActivity{
         requestQueue.add(jsonStringRequest);
     }
     //
-    //gets a card from deck and puts it into players' hands.
+    //Draws cards and places them into shared deck
     //
-    public void drawCard(String url, Player player, final VolleyResponseListener volleyResponseListener) {
+    public void drawCard(String url, final VolleyResponseListener volleyResponseListener) {
         StringRequest jsonStringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            parse2(response, player);
+                            parse2(response);
 
                         } catch (Exception e) {
                             System.out.println(e);
@@ -222,16 +212,18 @@ public class CardActivity extends AppCompatActivity{
         return returnString;
     }
     //
-    // Transform response into JsonArray, then parses.
+    // Transform response into JsonArray, then parses. Places responses into sharedDeck. Called by drawCard
     //
-    private boolean parse2(String response, Player player) {
+    private boolean parse2(String response) {
         try {
             JSONObject JSONresponse = new JSONObject(response);
             JSONArray Jsonarray = JSONresponse.getJSONArray("cards");
             for (int i = 0; i < Jsonarray.length(); i++) {
                 JSONObject temp = Jsonarray.getJSONObject(i);
-                player.hand.add(temp.getString("value"));
-                player.code.add(temp.getString("code"));      //adds directly into both arrays
+                sharedDeck.cardDeckValues.push(temp.getString("value"));
+                sharedDeck.cardDeckCodes.push(temp.getString("code"));
+                //player.hand.add(temp.getString("value"));
+               // player.code.add(temp.getString("code"));      //adds directly into both arrays
             }
         }catch (Exception e) {
             System.out.println(e);
@@ -241,12 +233,9 @@ public class CardActivity extends AppCompatActivity{
     }
     //displays card images after on screen
     public void setCards(Player player) {
-
         for (int i = 0; i < player.code.size();i++) {
-
             Resources res = this.getResources();
             String temp = "" +player.code.get(i).charAt(1) + player.code.get(i).charAt(0); //+ ".png";
-
             temp = temp.toLowerCase();
             System.out.println(temp);
             int resID = res.getIdentifier(temp , "drawable", CardActivity.this.getPackageName());
@@ -257,23 +246,15 @@ public class CardActivity extends AppCompatActivity{
     // Makes the value1 of the House greater than 17. Does not check Busted or not.
     public void stayChecker() {
         if (House.value2 < 17 && House.value1 < 17) {
-            drawCard(draw1card, House, new VolleyResponseListener() {
-                @Override
-                public void onError(String error) { System.out.println(error);
-                }
-                @Override
-                public void onResponse(String response) {
-                    setCards(House);
-                    House.setValues(House.hand);
-                    if (House.value2 < 17 && House.value1 < 17) {
-                         stayChecker();
-                    }
-                    return;
-                }
-            });
+            sharedDeck.drawSharedDeck(House);
+            setCards(House);
+            House.setValues(House.hand);
+            if (House.value2 < 17 && House.value1 < 17) {
+                stayChecker();
+            }
+            return;
         }
-        return;
-        }
+    }
         // allows outside classes to use my activity method. Recreate() in popup.java
         public static CardActivity getInstance() {
             return instance;
@@ -283,8 +264,53 @@ public class CardActivity extends AppCompatActivity{
             popUp resultView = new popUp();
             resultView.popupText = result;
             resultView.showPopupWindow(v);
+            CardActivity.getInstance().recreate();
         }
+    //
+    //
+    //resets everything, player and shareddeck. Restarts blackjack game
+    //
+    public void resetAll() {
+        sharedDeck.clearStacks();
+        User.reset(); House.reset();
+        String reshuffleDeck = "https://deckofcardsapi.com/api/deck/"+ deckid +"/shuffle/";
+        getNewDeck(reshuffleDeck, new VolleyResponseListener() {
+            @Override
+            public void onError(String error) {
+                System.out.println(error);
+            }
+            @Override
+            public void onResponse(String response) {
+                deckid = Parse(response, "deck_id");
+                String draw30cards = "https://deckofcardsapi.com/api/deck/" + deckid + "/draw/?count=30";
+                //
+                // Draw 30 cards into stacks, both players draw 2 cards.
+                //
+                drawCard(draw30cards, new VolleyResponseListener() {
+                    @Override
+                    public void onError(String error) { }
+                    @Override
+                    public void onResponse(String response) {
+                        sharedDeck.drawSharedDeck(User);   sharedDeck.drawSharedDeck(User);
+                        sharedDeck.drawSharedDeck(House);   sharedDeck.drawSharedDeck(House);
+
+                        TextView tempText = findViewById(R.id.textView3);
+                        tempText.setText("");
+
+                        User.setValues(User.hand);
+                        setCards(User);
+                        House.setValues(House.hand);
+                        setCards(House);
+                        House.cardSlots[1].setImageResource(R.drawable.gray_back);
+                    }
+                });
+
+            }
+        });
+
+    }
 }
+
 
 
 

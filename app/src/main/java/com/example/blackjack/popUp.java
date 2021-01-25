@@ -46,10 +46,10 @@ public class popUp {
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CardActivity.getInstance().recreate();
+                popupWindow.dismiss();
+             //   CardActivity.getInstance().recreate();
                 //As an example, display the message
                // Toast.makeText(view.getContext(), "Wow, popup action button", Toast.LENGTH_SHORT).show();
-                popupWindow.dismiss();
             }
         });
 
