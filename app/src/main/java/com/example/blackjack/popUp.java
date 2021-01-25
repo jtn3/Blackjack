@@ -35,20 +35,21 @@ public class popUp {
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
         //Set the location of the window on the screen
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        popupWindow.showAtLocation(view, Gravity.BOTTOM, 0, 300);
 
         //Initialize the elements of our window, install the handler
 
         TextView test2 = popupView.findViewById(R.id.textView4);
         test2.setText(popupText);
 
-        Button buttonEdit = popupView.findViewById(R.id.Button4);
+        Button buttonEdit = popupView.findViewById(R.id.button);
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popupWindow.dismiss();
                 CardActivity.getInstance().resetAll();
-             //   CardActivity.getInstance().recreate();
+                popupWindow.dismiss();
+
+                //   CardActivity.getInstance().recreate();
                 //As an example, display the message
                // Toast.makeText(view.getContext(), "Wow, popup action button", Toast.LENGTH_SHORT).show();
             }

@@ -40,6 +40,7 @@ public class CardActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.card_table);
 
@@ -54,7 +55,8 @@ public class CardActivity extends AppCompatActivity{
 
         User.invisibility(); House.invisibility(); //ALL card slots are invisible
 
-
+        //Gives the popup access to restartAll function
+        instance = this;
         String deckURL = "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1";
 
         //Gets a new deck and draws 2 cards for both players
@@ -91,7 +93,7 @@ public class CardActivity extends AppCompatActivity{
 
                     }
         });
-                //Stay and Draw Buttons
+                //Stay and Draw Buttons. Both can call popUp class.
         Button StayButton = findViewById(R.id.Stay);
         StayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -102,19 +104,16 @@ public class CardActivity extends AppCompatActivity{
                 stayChecker();
                 setCards(House);
                 if (House.Busted()) {
-                    holder += " House busted!";
+                    holder += " House busted! You Won!";
                     popupMaker(holder,v);
-                    //tempText.setText(holder);
-                   // User.reset(); House.reset();
+
                     return;
                 }
                 if (User.isWinner(House)) {
-                    //tempText.setText(holder);
                     holder += "You Won!";
                     popupMaker(holder,v);
                     return;
                 } else {
-                    //tempText.setText(holder);
                     holder += "You Lost!";
                     popupMaker(holder,v);
                     return;
@@ -130,10 +129,12 @@ public class CardActivity extends AppCompatActivity{
                 TextView tempText = findViewById(R.id.textView3);
                 sharedDeck.drawSharedDeck(User);
                         if (!(User.setValues(User.hand))) {
+                            setCards(House);
                             String holder = "You Busted.";
-                            tempText.setText(holder);
+                            popupMaker(holder,v);
+                           // tempText.setText(holder);
                             setCards(User);
-                            User.reset(); House.reset();
+                            //User.reset(); House.reset();
                             return;
                         }
                         setCards(User);

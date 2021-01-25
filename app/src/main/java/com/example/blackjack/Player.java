@@ -59,6 +59,7 @@ public class Player {
     //checks which numbers are higher. Does not account for over 21. Check if busted before this. If tied, other wins.
     //
     public boolean isWinner(Player other) {
+        over21(); other.over21();
         int finalValue1; int finalValue2;
         if (this.value1 > this.value2) {
             finalValue1 = this.value1;
@@ -98,6 +99,18 @@ public class Player {
             return true;
         }
         return false;
+    }
+    //
+    // Handles edge cases for isWinner
+    //
+    public void over21() {
+        if (value1 > 21) {
+            value1 = -10;
+        }
+        if (value2 > 21) {
+            value2 = -10;
+        }
+        return;
     }
     //sets all all images in cardSlots to ivinsible called at start of every new game.
     public void invisibility() {
