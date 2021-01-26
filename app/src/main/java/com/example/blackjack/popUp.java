@@ -50,11 +50,9 @@ public class popUp {
                 popupWindow.dismiss();
 
                 //   CardActivity.getInstance().recreate();
-                //As an example, display the message
-               // Toast.makeText(view.getContext(), "Wow, popup action button", Toast.LENGTH_SHORT).show();
+
             }
         });
-
 
 
         //Handler for clicking on the inactive zone of the window
@@ -63,7 +61,7 @@ public class popUp {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                //Close the window when clicked
+               // Does nothing when clicked outside
                 //popupWindow.dismiss();
                 return true;
             }

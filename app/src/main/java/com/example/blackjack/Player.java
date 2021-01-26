@@ -1,7 +1,6 @@
 package com.example.blackjack;
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
+
 import android.view.View;
 import android.widget.ImageView;
 
@@ -112,7 +111,7 @@ public class Player {
         }
         return;
     }
-    //sets all all images in cardSlots to ivinsible called at start of every new game.
+    //sets all all images in cardSlots to invinsible called at start of every new game.
     public void invisibility() {
         for (ImageView i : cardSlots) {
             i.setVisibility(View.INVISIBLE);
