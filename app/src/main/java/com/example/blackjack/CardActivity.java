@@ -274,6 +274,9 @@ public class CardActivity extends AppCompatActivity{
     //resets everything, player and shareddeck. Restarts blackjack game
     //
     public void resetAll() {
+        String loadingMsg = "Loading. . .";
+        TextView tempText = findViewById(R.id.textView3);
+        tempText.setText(loadingMsg);
         sharedDeck.clearStacks();
         User.reset(); House.reset();
         String reshuffleDeck = "https://deckofcardsapi.com/api/deck/"+ deckid +"/shuffle/";
