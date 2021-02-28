@@ -11,3 +11,5 @@ Android 11
 2. After every hand is played, card deck is reshuffled (Only 1 deck is used)    
 3. After player Stays, House's hand will draw until hand's value is 16+.    
 4. House starts with one face down card that is revealed after player Stays or Busts.
+
+![](appScreenshot.PNG)       ![](appScreenshot2.PNG)
